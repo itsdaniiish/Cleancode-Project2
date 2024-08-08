@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Application</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #007bff;
+            font-size: 2em;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: calc(100% - 24px);
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        .result h2 {
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+        .result p {
+            margin: 5px 0;
+            font-size: 1em;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 90%;
+                padding: 20px;
+            }
+            input[type="text"], button {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <form id="weatherForm">
+            <input type="text" id="cityInput" placeholder="Enter city" required>
+            <button type="submit">Get Weather</button>
+        </form>
+        <div class="result" id="weatherResult"></div>
+    </div>
+
+    <script>
+        document.getElementById('weatherForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const city = document.getElementById('cityInput').value;
+            const resultDiv = document.getElementById('weatherResult');
+
+            try {
+                const response = await fetch(`/weather?city=${encodeURIComponent(city)}`);
+                if (!response.ok) {
+                    throw new Error('City not found');
+                }
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h2>Weather in ${data.name}</h2>
+                    <p>Temperature: ${data.main.temp} °C</p>
+                    <p>Weather: ${data.weather[0].description}</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p>${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

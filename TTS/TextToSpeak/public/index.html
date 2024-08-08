@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Say.js App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Say.js App</h1>
+        <textarea id="text" placeholder="Enter text to speak"></textarea>
+        <div class="controls">
+            <label for="language">Language: </label>
+            <select id="language">
+                <option value="en">English</option>
+            </select>
+        </div>
+        <button onclick="speak()">Speak</button>
+        <audio id="audio" controls></audio>
+    </div>
+
+    <script>
+        async function speak() {
+            const text = document.getElementById('text').value;
+            const lang = document.getElementById('language').value;
+
+            const response = await fetch('http://localhost:3600/api/speak', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text, lang })
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = URL.createObjectURL(blob);
+                const audio = document.getElementById('audio');
+                audio.src = url;
+                audio.play();
+            } else {
+                alert('Error: ' + (await response.json()).error);
+            }
+        }
+    </script>
+</body>
+</html>
